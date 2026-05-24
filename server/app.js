@@ -20,10 +20,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://full-stack-frontend.onrender.com",
-    ],
+    origin: ["http://localhost:5173", "https://ankush-social-app.onrender.com"],
     credentials: true,
   }),
 );
