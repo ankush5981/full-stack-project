@@ -16,7 +16,7 @@ export default function Profile() {
   const fetchProfile = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/profile",
+        "https://full-stack-project-1-mx06.onrender.com/profile",
         {
           withCredentials: true,
         }
@@ -34,7 +34,7 @@ export default function Profile() {
 
     try {
       await axios.post(
-        "http://localhost:3000/post",
+        "https://full-stack-project-1-mx06.onrender.com/post",
         { content },
         {
           withCredentials: true,
@@ -53,7 +53,7 @@ export default function Profile() {
   const deletePost = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:3000/post/${id}`,
+        `https://full-stack-project-1-mx06.onrender.com/post/${id}`,
         {
           withCredentials: true,
         }
@@ -69,7 +69,7 @@ export default function Profile() {
   const logout = async () => {
     try {
       await axios.get(
-        "http://localhost:3000/logout",
+        "https://full-stack-project-1-mx06.onrender.com/logout",
         {
           withCredentials: true,
         }
@@ -140,7 +140,7 @@ export default function Profile() {
 
             {/* PROFILE IMAGE */}
             <img
-              src={`/images/uploads/${user.profilePic}`}
+              src={`https://full-stack-project-1-mx06.onrender.com/uploads/${user.profilePic}`}
               alt=""
               onClick={() => {
                 window.location.href =

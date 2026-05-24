@@ -18,7 +18,7 @@ export default function Register() {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/register",
+        "https://full-stack-project-1-mx06.onrender.com/register",
         {
           name,
           username,

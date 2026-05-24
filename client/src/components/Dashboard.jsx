@@ -7,7 +7,7 @@ export default function Dashboard() {
   const getPosts = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/allposts",
+        "https://full-stack-project-1-mx06.onrender.com/allposts",
         {
           withCredentials: true,
         }
@@ -85,7 +85,7 @@ export default function Dashboard() {
 
                   {/* PROFILE */}
                   <img
-                    src={`/images/uploads/${post.user.profilePic}`}
+                    src={`https://full-stack-project-1-mx06.onrender.com/uploads/${post.user.profilePic}`}
                     alt=""
                     className="w-14 h-14 rounded-full object-cover border-2 border-gray-700"
                   />
