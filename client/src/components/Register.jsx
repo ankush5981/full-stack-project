@@ -1,319 +1,216 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 
-export default function Profile() {
+export default function Register() {
 
-  const [user, setUser] =
-    useState(null);
-
-  const [content, setContent] =
+  const [name, setName] =
     useState("");
 
-  // TOKEN
-  const token =
-    localStorage.getItem("token");
+  const [username, setUsername] =
+    useState("");
 
-  // REDIRECT IF NO TOKEN
-  useEffect(() => {
+  const [email, setEmail] =
+    useState("");
 
-    if (!token) {
-      window.location.href =
-        "/login";
-    } else {
-      fetchProfile();
-    }
+  const [password, setPassword] =
+    useState("");
 
-  }, []);
+  const [message, setMessage] =
+    useState("");
 
-  // FETCH PROFILE
-  const fetchProfile = async () => {
+  // REGISTER
+  const handleRegister = async (e) => {
+
+    e.preventDefault();
 
     try {
 
-      const res = await axios.get(
-        "https://full-stack-project-1-mx06.onrender.com/profile",
+      const res = await axios.post(
+        "https://full-stack-project-1-mx06.onrender.com/register",
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          name,
+          username,
+          email,
+          password,
         }
       );
 
-      setUser(res.data);
-
-    } catch (error) {
-
-      console.log(error);
-
-      localStorage.removeItem("token");
-
-      window.location.href =
-        "/login";
-    }
-  };
-
-  // CREATE POST
-  const createPost = async () => {
-
-    if (!content.trim()) return;
-
-    try {
-
-      await axios.post(
-        "https://full-stack-project-1-mx06.onrender.com/post",
-        {
-          content,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      // SAVE TOKEN
+      localStorage.setItem(
+        "token",
+        res.data.token
       );
 
-      setContent("");
-
-      fetchProfile();
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // DELETE POST
-  const deletePost = async (id) => {
-
-    try {
-
-      await axios.delete(
-        `https://full-stack-project-1-mx06.onrender.com/post/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      setMessage(
+        res.data.message
       );
 
-      fetchProfile();
+      // REDIRECT
+      setTimeout(() => {
+
+        window.location.href =
+          "/dashboard";
+
+      }, 1000);
 
     } catch (error) {
-      console.log(error);
+
+      setMessage(
+        error.response?.data
+          ?.message ||
+        "Registration failed"
+      );
     }
-  };
-
-  // LOGOUT
-  const logout = () => {
-
-    localStorage.removeItem("token");
-
-    window.location.href =
-      "/login";
-  };
-
-  // LOADING
-  if (!user) {
-
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-
-        <h1 className="text-3xl font-bold text-white">
-          Loading...
-        </h1>
-
-      </div>
-    );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black flex items-center justify-center px-5">
 
-      {/* NAVBAR */}
-      <div className="sticky top-0 z-50 bg-[#111111] border-b border-gray-800">
+      {/* CARD */}
+      <div className="w-full max-w-md bg-[#111111] border border-gray-800 rounded-3xl p-8 shadow-2xl">
 
-        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+        {/* LOGO */}
+        <div className="text-center mb-8">
 
-          {/* BACK */}
-          <button
-            onClick={() => {
-              window.location.href =
-                "/dashboard";
-            }}
-            className="px-5 py-2 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 transition"
-          >
-            Back
-          </button>
-
-          {/* TITLE */}
-          <h1 className="text-3xl font-bold">
-            Profile
+          <h1 className="text-4xl font-bold text-white">
+            SocialApp
           </h1>
 
-          {/* LOGOUT */}
-          <button
-            onClick={logout}
-            className="px-5 py-2 bg-red-500 hover:bg-red-600 rounded-2xl font-semibold transition"
-          >
-            Logout
-          </button>
+          <p className="text-gray-400 mt-2">
+            Create your account
+          </p>
 
         </div>
 
-      </div>
+        {/* FORM */}
+        <form
+          onSubmit={handleRegister}
+          className="flex flex-col gap-5"
+        >
 
-      {/* MAIN */}
-      <div className="max-w-3xl mx-auto py-10 px-5">
+          {/* NAME */}
+          <div>
 
-        {/* PROFILE CARD */}
-        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-8 mb-8">
+            <label className="text-sm text-gray-300 block mb-2">
+              Name
+            </label>
 
-          <div className="flex items-center gap-5">
-
-            {/* PROFILE IMAGE */}
-            <img
-              src={`https://full-stack-project-1-mx06.onrender.com/uploads/${user.profilePic}`}
-              alt="profile"
-              onClick={() => {
-                window.location.href =
-                  "/edit";
-              }}
-              className="w-24 h-24 rounded-full object-cover border-4 border-gray-700 cursor-pointer hover:scale-105 transition duration-300"
+            <input
+              type="text"
+              placeholder="Enter name"
+              value={name}
+              onChange={(e) =>
+                setName(e.target.value)
+              }
+              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-3 text-white outline-none focus:border-blue-500 transition"
             />
 
-            {/* USER INFO */}
-            <div>
+          </div>
 
-              <h1 className="text-3xl font-bold">
-                {user.name}
-              </h1>
+          {/* USERNAME */}
+          <div>
 
-              <p className="text-gray-400 mt-1">
-                @{user.username}
-              </p>
+            <label className="text-sm text-gray-300 block mb-2">
+              Username
+            </label>
 
-              <div className="flex gap-6 mt-4 text-sm text-gray-400">
-
-                <p>
-                  <span className="text-white font-bold">
-                    {user.posts.length}
-                  </span>{" "}
-                  Posts
-                </p>
-
-              </div>
-
-            </div>
+            <input
+              type="text"
+              placeholder="Enter username"
+              value={username}
+              onChange={(e) =>
+                setUsername(
+                  e.target.value
+                )
+              }
+              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-3 text-white outline-none focus:border-blue-500 transition"
+            />
 
           </div>
 
-        </div>
+          {/* EMAIL */}
+          <div>
 
-        {/* CREATE POST */}
-        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-6 mb-8">
+            <label className="text-sm text-gray-300 block mb-2">
+              Email
+            </label>
 
-          <textarea
-            placeholder="What's on your mind?"
-            value={content}
-            onChange={(e) =>
-              setContent(e.target.value)
-            }
-            className="w-full h-28 bg-black border border-gray-700 rounded-2xl p-4 text-white outline-none resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
-          />
-
-          <div className="flex justify-end mt-4">
-
-            <button
-              onClick={createPost}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl font-semibold transition"
-            >
-              Create Post
-            </button>
+            <input
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-3 text-white outline-none focus:border-blue-500 transition"
+            />
 
           </div>
 
-        </div>
+          {/* PASSWORD */}
+          <div>
 
-        {/* POSTS */}
-        <div className="space-y-6">
+            <label className="text-sm text-gray-300 block mb-2">
+              Password
+            </label>
 
-          {user.posts.length === 0 ? (
+            <input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) =>
+                setPassword(
+                  e.target.value
+                )
+              }
+              className="w-full bg-black border border-gray-700 rounded-2xl px-4 py-3 text-white outline-none focus:border-blue-500 transition"
+            />
 
-            <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center text-gray-400">
+          </div>
 
-              No posts yet
+          {/* MESSAGE */}
+          {message && (
 
-            </div>
+            <p className="text-center text-red-500 text-sm">
 
-          ) : (
+              {message}
 
-            user.posts.map((p) => (
-
-              <div
-                key={p._id}
-                className="bg-[#111111] border border-gray-800 rounded-3xl overflow-hidden"
-              >
-
-                {/* POST TOP */}
-                <div className="p-5 flex items-center justify-between border-b border-gray-800">
-
-                  <div className="flex items-center gap-4">
-
-                    <img
-                      src={`https://full-stack-project-1-mx06.onrender.com/uploads/${user.profilePic}`}
-                      alt="profile"
-                      className="w-12 h-12 rounded-full object-cover border border-gray-700"
-                    />
-
-                    <div>
-
-                      <h2 className="font-bold">
-                        {user.name}
-                      </h2>
-
-                      <p className="text-sm text-gray-400">
-                        @{user.username}
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  {/* DELETE */}
-                  <button
-                    onClick={() =>
-                      deletePost(p._id)
-                    }
-                    className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-xl text-sm font-semibold transition"
-                  >
-                    Delete
-                  </button>
-
-                </div>
-
-                {/* CONTENT */}
-                <div className="p-5">
-
-                  <p className="text-gray-300 leading-7">
-                    {p.content}
-                  </p>
-
-                </div>
-
-                {/* FOOTER */}
-                <div className="px-5 py-4 border-t border-gray-800 flex items-center justify-between bg-black">
-
-                  <small className="text-gray-500 text-xs">
-                    {new Date(
-                      p.createdAt
-                    ).toLocaleString()}
-                  </small>
-
-                </div>
-
-              </div>
-            ))
+            </p>
           )}
 
+          {/* BUTTON */}
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-2xl font-semibold transition duration-300"
+          >
+            Register
+          </button>
+
+        </form>
+
+        {/* DIVIDER */}
+        <div className="flex items-center gap-3 my-6">
+
+          <div className="flex-1 h-[1px] bg-gray-800"></div>
+
+          <span className="text-gray-500 text-sm">
+            OR
+          </span>
+
+          <div className="flex-1 h-[1px] bg-gray-800"></div>
+
         </div>
+
+        {/* LOGIN */}
+        <button
+          onClick={() => {
+            window.location.href =
+              "/login";
+          }}
+          className="w-full border border-gray-700 hover:bg-[#1a1a1a] text-white py-3 rounded-2xl font-semibold transition duration-300"
+        >
+          Login
+        </button>
 
       </div>
 
