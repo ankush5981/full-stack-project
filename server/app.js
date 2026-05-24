@@ -29,8 +29,6 @@ cloudinary.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-app.use("/uploads", express.static("uploads"));
-
 app.use(
   cors({
     origin: ["http://localhost:5173", "https://ankush-social-app.onrender.com"],
@@ -224,13 +222,13 @@ app.get(
 // UPLOAD PROFILE PIC
 app.post(
   "/upload-profile-pic",
-
   IsloggedIn,
-
   upload.single("profilePic"),
 
   async (req, res) => {
     try {
+      console.log(req.file);
+
       let user = await userModel.findOne({
         email: req.user.email,
       });
@@ -241,13 +239,18 @@ app.post(
         });
       }
 
+      if (!req.file) {
+        return res.status(400).json({
+          message: "No file uploaded",
+        });
+      }
+
       user.profilePic = req.file.path;
 
       await user.save();
 
       res.json({
         message: "Profile picture uploaded",
-
         image: req.file.path,
       });
     } catch (error) {
@@ -255,6 +258,7 @@ app.post(
 
       res.status(500).json({
         message: "Upload failed",
+        error: error.message,
       });
     }
   },
