@@ -52,10 +52,6 @@ const upload = multer({
   storage,
 });
 
-const upload = multer({
-  storage,
-});
-
 // REGISTER
 app.post("/register", async (req, res) => {
   const { name, username, email, password } = req.body;
