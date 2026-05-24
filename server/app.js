@@ -68,10 +68,14 @@ app.post("/register", async (req, res) => {
           email: user.email,
           userid: user._id,
         },
-        "shhhh",
+        process.env.JWT_SECRET,
       );
 
-      res.cookie("token", token);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
 
       res.json({
         message: "Registered successfully",
@@ -80,7 +84,7 @@ app.post("/register", async (req, res) => {
   });
 });
 
-app.delete("/post/:id", async (req, res) => {
+app.delete("/post/:id", IsloggedIn, async (req, res) => {
   await postModel.findByIdAndDelete(req.params.id);
 
   res.json({
@@ -107,10 +111,14 @@ app.post("/login", async (req, res) => {
           email: user.email,
           userid: user._id,
         },
-        "shhhh",
+        process.env.JWT_SECRET,
       );
 
-      res.cookie("token", token);
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      });
 
       res.json({
         message: "Login successful",
@@ -206,7 +214,11 @@ app.post(
 
 // Logout
 app.get("/logout", (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
 
   res.json({
     message: "Logged out",
@@ -215,17 +227,23 @@ app.get("/logout", (req, res) => {
 
 // Middleware
 function IsloggedIn(req, res, next) {
-  if (!req.cookies.token) {
+  try {
+    if (!req.cookies.token) {
+      return res.status(401).json({
+        message: "Login required",
+      });
+    }
+
+    let data = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
+
+    req.user = data;
+
+    next();
+  } catch (error) {
     return res.status(401).json({
-      message: "Login required",
+      message: "Invalid token",
     });
   }
-
-  let data = jwt.verify(req.cookies.token, "shhhh");
-
-  req.user = data;
-
-  next();
 }
 
 // Database
