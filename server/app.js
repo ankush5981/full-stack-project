@@ -245,13 +245,13 @@ app.post(
         });
       }
 
-      user.profilePic = req.file.path;
+      user.profilePic = req.file.secure_url;
 
       await user.save();
 
       res.json({
         message: "Profile picture uploaded",
-        image: req.file.path,
+        image: req.file.secure_url,
       });
     } catch (error) {
       console.log(error);
