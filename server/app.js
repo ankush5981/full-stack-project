@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const userModel = require("./models/user");
 const postModel = require("./models/post");
@@ -21,6 +23,12 @@ app.use(
   }),
 );
 
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
+});
+
 app.use("/uploads", express.static("uploads"));
 
 app.use(
@@ -30,14 +38,18 @@ app.use(
 );
 
 // MULTER
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
+const storage = new CloudinaryStorage({
+  cloudinary,
 
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+  params: {
+    folder: "profile_pics",
+
+    allowed_formats: ["jpg", "png", "jpeg"],
   },
+});
+
+const upload = multer({
+  storage,
 });
 
 const upload = multer({
@@ -233,14 +245,14 @@ app.post(
         });
       }
 
-      user.profilePic = req.file.filename;
+      user.profilePic = req.file.path;
 
       await user.save();
 
       res.json({
         message: "Profile picture uploaded",
 
-        image: req.file.filename,
+        image: req.file.path,
       });
     } catch (error) {
       console.log(error);
