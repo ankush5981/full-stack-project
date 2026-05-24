@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Profile() {
-
   const [user, setUser] =
     useState(null);
 
@@ -19,9 +18,7 @@ export default function Profile() {
   }, []);
 
   const fetchProfile = async () => {
-
     try {
-
       const res = await axios.get(
         "https://full-stack-project-1-mx06.onrender.com/profile",
         {
@@ -34,7 +31,6 @@ export default function Profile() {
       setUser(res.data);
 
     } catch (error) {
-
       console.log(error);
 
       window.location.href =
@@ -44,11 +40,9 @@ export default function Profile() {
 
   // CREATE POST
   const createPost = async () => {
-
     if (!content.trim()) return;
 
     try {
-
       await axios.post(
         "https://full-stack-project-1-mx06.onrender.com/post",
         { content },
@@ -70,9 +64,7 @@ export default function Profile() {
 
   // DELETE POST
   const deletePost = async (id) => {
-
     try {
-
       await axios.delete(
         `https://full-stack-project-1-mx06.onrender.com/post/${id}`,
         {
@@ -91,7 +83,6 @@ export default function Profile() {
 
   // LOGOUT
   const logout = () => {
-
     localStorage.removeItem("token");
 
     window.location.href =
@@ -102,21 +93,17 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-
         <h1 className="text-3xl font-bold text-white">
           Loading...
         </h1>
-
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-black text-white">
-
       {/* NAVBAR */}
       <div className="sticky top-0 z-50 bg-[#111111] border-b border-gray-800">
-
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
 
           <button
@@ -141,7 +128,6 @@ export default function Profile() {
           </button>
 
         </div>
-
       </div>
 
       {/* MAIN */}
@@ -154,7 +140,11 @@ export default function Profile() {
 
             {/* PROFILE IMAGE */}
             <img
-              src={`https://full-stack-project-1-mx06.onrender.com/uploads/${user.profilePic}`}
+              src={
+                user.profilePic
+                  ? user.profilePic
+                  : "https://via.placeholder.com/150"
+              }
               alt=""
               onClick={() => {
                 window.location.href =
@@ -222,9 +212,7 @@ export default function Profile() {
           {user.posts.length === 0 ? (
 
             <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center text-gray-400">
-
               No posts yet
-
             </div>
 
           ) : (
@@ -242,7 +230,11 @@ export default function Profile() {
                   <div className="flex items-center gap-4">
 
                     <img
-                      src={`https://full-stack-project-1-mx06.onrender.com/uploads/${user.profilePic}`}
+                      src={
+                        user.profilePic
+                          ? user.profilePic
+                          : "https://via.placeholder.com/150"
+                      }
                       alt=""
                       className="w-12 h-12 rounded-full object-cover border border-gray-700"
                     />

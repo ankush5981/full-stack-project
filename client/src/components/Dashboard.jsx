@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Dashboard() {
-
   const [posts, setPosts] =
     useState([]);
 
@@ -15,9 +14,7 @@ export default function Dashboard() {
 
   // FETCH POSTS
   const getPosts = async () => {
-
     try {
-
       const res = await axios.get(
         "https://full-stack-project-1-mx06.onrender.com/allposts",
         {
@@ -28,45 +25,33 @@ export default function Dashboard() {
       );
 
       setPosts(res.data);
-
     } catch (error) {
-
       console.log(error);
 
       localStorage.removeItem("token");
 
       window.location.href =
         "/login";
-
     } finally {
-
       setLoading(false);
     }
   };
 
   // LOAD POSTS
   useEffect(() => {
-
     if (!token) {
-
       window.location.href =
         "/login";
-
     } else {
-
       getPosts();
     }
-
   }, []);
 
   return (
     <div className="min-h-screen bg-black text-white">
-
       {/* NAVBAR */}
       <div className="sticky top-0 z-50 bg-[#0f0f0f] border-b border-gray-800">
-
         <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
-
           {/* LOGO */}
           <h1 className="text-3xl font-bold text-white">
             SocialApp
@@ -74,7 +59,6 @@ export default function Dashboard() {
 
           {/* RIGHT */}
           <div className="flex items-center gap-4">
-
             {/* PROFILE */}
             <button
               onClick={() => {
@@ -89,7 +73,6 @@ export default function Dashboard() {
             {/* LOGOUT */}
             <button
               onClick={() => {
-
                 localStorage.removeItem(
                   "token"
                 );
@@ -101,19 +84,14 @@ export default function Dashboard() {
             >
               Logout
             </button>
-
           </div>
-
         </div>
-
       </div>
 
       {/* MAIN */}
       <div className="max-w-6xl mx-auto py-10 px-5">
-
         {/* TITLE */}
         <div className="text-center mb-10">
-
           <h1 className="text-4xl font-bold">
             All User Posts
           </h1>
@@ -121,49 +99,34 @@ export default function Dashboard() {
           <p className="text-gray-400 mt-3">
             Explore posts shared by users
           </p>
-
         </div>
 
         {/* LOADING */}
         {loading ? (
-
           <div className="flex items-center justify-center py-20">
-
             <div className="w-12 h-12 border-4 border-gray-700 border-t-white rounded-full animate-spin"></div>
-
           </div>
-
         ) : (
-
           <>
             {/* POSTS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
               {posts.length === 0 ? (
-
                 <div className="col-span-full bg-[#111111] rounded-3xl p-10 text-center text-gray-400 border border-gray-800">
-
                   No posts available
-
                 </div>
-
               ) : (
-
                 posts.map((post) => (
-
                   <div
                     key={post._id}
                     className="bg-[#111111] rounded-3xl overflow-hidden border border-gray-800 hover:border-gray-600 transition duration-300"
                   >
-
                     {/* TOP */}
                     <div className="p-5 flex items-center gap-4 border-b border-gray-800">
-
                       {/* PROFILE */}
                       <img
                         src={
                           post.user?.profilePic
-                            ? `https://full-stack-project-1-mx06.onrender.com/uploads/${post.user.profilePic}`
+                            ? post.user.profilePic
                             : "https://via.placeholder.com/150"
                         }
                         alt="profile"
@@ -172,7 +135,6 @@ export default function Dashboard() {
 
                       {/* USER INFO */}
                       <div>
-
                         <h2 className="font-bold text-lg text-white">
                           {post.user?.name ||
                             "Unknown User"}
@@ -183,23 +145,18 @@ export default function Dashboard() {
                           {post.user?.username ||
                             "unknown"}
                         </p>
-
                       </div>
-
                     </div>
 
                     {/* CONTENT */}
                     <div className="p-5 min-h-[120px]">
-
                       <p className="text-gray-300 leading-7 text-[15px]">
                         {post.content}
                       </p>
-
                     </div>
 
                     {/* FOOTER */}
                     <div className="px-5 py-4 border-t border-gray-800 flex items-center justify-between bg-black">
-
                       <small className="text-gray-500 text-xs">
                         {new Date(
                           post.createdAt
@@ -207,24 +164,17 @@ export default function Dashboard() {
                       </small>
 
                       {/* LIKE BUTTON */}
-                      <button
-                        className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm font-semibold hover:bg-[#1a1a1a] hover:text-white transition"
-                      >
+                      <button className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm font-semibold hover:bg-[#1a1a1a] hover:text-white transition">
                         👍 Like
                       </button>
-
                     </div>
-
                   </div>
                 ))
               )}
-
             </div>
           </>
         )}
-
       </div>
-
     </div>
   );
 }
