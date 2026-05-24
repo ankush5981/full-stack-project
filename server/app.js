@@ -16,6 +16,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use("/uploads", express.static("uploads"));
 
 app.use(
   cors({
@@ -26,7 +27,7 @@ app.use(
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "../client/public/images/uploads");
+    cb(null, "uploads/");
   },
 
   filename: function (req, file, cb) {
@@ -225,10 +226,17 @@ function IsloggedIn(req, res, next) {
 }
 
 // Database
-mongoose.connect(process.env.MONGO_URL).then(() => {
-  console.log("MongoDB connected");
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    console.log("MongoDB connected");
 
-  app.listen(process.env.PORT, () => {
-    console.log("Server running on port " + process.env.PORT);
+    const PORT = process.env.PORT || 3000;
+
+    app.listen(PORT, () => {
+      console.log(`Server running on ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB Error:", err);
   });
-});
