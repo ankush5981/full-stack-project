@@ -75,6 +75,7 @@ app.post("/register", async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        path: "/",
       });
 
       res.json({
@@ -118,6 +119,7 @@ app.post("/login", async (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
+        path: "/",
       });
 
       res.json({
@@ -218,6 +220,7 @@ app.get("/logout", (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
+    path: "/",
   });
 
   res.json({

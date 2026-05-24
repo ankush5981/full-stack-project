@@ -17,7 +17,7 @@ export default function EditProfilePic() {
 
     try {
       await axios.post(
-        "http://localhost:3000/upload-profile-pic",
+        "https://full-stack-project-1-mx06.onrender.com/upload-profile-pic",
         formData,
         {
           withCredentials: true,
