@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Profile() {
+
   const [user, setUser] =
     useState(null);
 
   const [content, setContent] =
     useState("");
+
+  // TOKEN
+  const token =
+    localStorage.getItem("token");
 
   // FETCH PROFILE
   useEffect(() => {
@@ -14,36 +19,50 @@ export default function Profile() {
   }, []);
 
   const fetchProfile = async () => {
+
     try {
+
       const res = await axios.get(
         "https://full-stack-project-1-mx06.onrender.com/profile",
         {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       setUser(res.data);
+
     } catch (error) {
+
       console.log(error);
+
+      window.location.href =
+        "/login";
     }
   };
 
   // CREATE POST
   const createPost = async () => {
+
     if (!content.trim()) return;
 
     try {
+
       await axios.post(
         "https://full-stack-project-1-mx06.onrender.com/post",
         { content },
         {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       setContent("");
 
       fetchProfile();
+
     } catch (error) {
       console.log(error);
     }
@@ -51,35 +70,32 @@ export default function Profile() {
 
   // DELETE POST
   const deletePost = async (id) => {
+
     try {
+
       await axios.delete(
         `https://full-stack-project-1-mx06.onrender.com/post/${id}`,
         {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       fetchProfile();
+
     } catch (error) {
       console.log(error);
     }
   };
 
   // LOGOUT
-  const logout = async () => {
-    try {
-      await axios.get(
-        "https://full-stack-project-1-mx06.onrender.com/logout",
-        {
-          withCredentials: true,
-        }
-      );
+  const logout = () => {
 
-      window.location.href =
-        "/login";
-    } catch (error) {
-      console.log(error);
-    }
+    localStorage.removeItem("token");
+
+    window.location.href =
+      "/login";
   };
 
   // LOADING
@@ -102,10 +118,11 @@ export default function Profile() {
       <div className="sticky top-0 z-50 bg-[#111111] border-b border-gray-800">
 
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+
           <button
             onClick={() => {
               window.location.href =
-                "/dashboard"
+                "/dashboard";
             }}
             className="px-5 py-2 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 transition"
           >
@@ -123,8 +140,6 @@ export default function Profile() {
             Logout
           </button>
 
-
-
         </div>
 
       </div>
@@ -136,7 +151,6 @@ export default function Profile() {
         <div className="bg-[#111111] border border-gray-800 rounded-3xl p-8 mb-8">
 
           <div className="flex items-center gap-5">
-
 
             {/* PROFILE IMAGE */}
             <img
@@ -168,8 +182,6 @@ export default function Profile() {
                   </span>{" "}
                   Posts
                 </p>
-
-
 
               </div>
 
@@ -208,13 +220,17 @@ export default function Profile() {
         <div className="space-y-6">
 
           {user.posts.length === 0 ? (
+
             <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center text-gray-400">
 
               No posts yet
 
             </div>
+
           ) : (
+
             user.posts.map((p) => (
+
               <div
                 key={p._id}
                 className="bg-[#111111] border border-gray-800 rounded-3xl overflow-hidden"
@@ -226,7 +242,7 @@ export default function Profile() {
                   <div className="flex items-center gap-4">
 
                     <img
-                      src={`/images/uploads/${user.profilePic}`}
+                      src={`https://full-stack-project-1-mx06.onrender.com/uploads/${user.profilePic}`}
                       alt=""
                       className="w-12 h-12 rounded-full object-cover border border-gray-700"
                     />
@@ -256,7 +272,6 @@ export default function Profile() {
 
                 </div>
 
-
                 {/* CONTENT */}
                 <div className="p-5">
 
@@ -274,18 +289,6 @@ export default function Profile() {
                       p.createdAt
                     ).toLocaleString()}
                   </small>
-
-                  <div className="flex items-center gap-3">
-
-                    <button className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm hover:bg-[#1a1a1a] hover:text-white transition">
-                      👍 Like
-                    </button>
-
-                    <button className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm hover:bg-[#1a1a1a] hover:text-white transition">
-                      💬 Comment
-                    </button>
-
-                  </div>
 
                 </div>
 

@@ -2,10 +2,13 @@ import { useState } from "react";
 import axios from "axios";
 
 export default function Login() {
+
   const [email, setEmail] =
     useState("");
+
   const [password, setPassword] =
     useState("");
+
   const [message, setMessage] =
     useState("");
 
@@ -13,19 +16,34 @@ export default function Login() {
     e.preventDefault();
 
     try {
+
       const res = await axios.post(
-        "http://localhost:3000/login",
-        { email, password },
-        { withCredentials: true }
+        "https://full-stack-project-1-mx06.onrender.com/login",
+        {
+          email,
+          password,
+        }
       );
 
-      setMessage(res.data.message);
+      // SAVE TOKEN
+      localStorage.setItem(
+        "token",
+        res.data.token
+      );
 
+      setMessage(
+        res.data.message
+      );
+
+      // REDIRECT
       window.location.href =
         "/dashboard";
+
     } catch (error) {
+
       setMessage(
-        error.response.data.message
+        error.response?.data?.message ||
+        "Login failed"
       );
     }
   };
@@ -38,7 +56,6 @@ export default function Login() {
 
         {/* LOGO */}
         <div className="text-center mb-8">
-
 
           <h1 className="text-4xl font-bold text-white mt-5">
             SocialApp

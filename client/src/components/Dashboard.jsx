@@ -2,25 +2,54 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Dashboard() {
-  const [posts, setPosts] = useState([]);
 
+  const [posts, setPosts] =
+    useState([]);
+
+  // TOKEN
+  const token =
+    localStorage.getItem("token");
+
+  // FETCH POSTS
   const getPosts = async () => {
+
     try {
+
       const res = await axios.get(
         "https://full-stack-project-1-mx06.onrender.com/allposts",
         {
-          withCredentials: true,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       setPosts(res.data);
+
     } catch (error) {
+
       console.log(error);
+
+      localStorage.removeItem("token");
+
+      window.location.href =
+        "/login";
     }
   };
 
+  // LOAD POSTS
   useEffect(() => {
-    getPosts();
+
+    if (!token) {
+
+      window.location.href =
+        "/login";
+
+    } else {
+
+      getPosts();
+    }
+
   }, []);
 
   return (
@@ -31,10 +60,12 @@ export default function Dashboard() {
 
         <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
 
+          {/* LOGO */}
           <h1 className="text-3xl font-bold text-white">
             SocialApp
           </h1>
 
+          {/* PROFILE BUTTON */}
           <button
             onClick={() => {
               window.location.href =
@@ -44,7 +75,6 @@ export default function Dashboard() {
           >
             Profile
           </button>
-
 
         </div>
 
@@ -70,11 +100,17 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
           {posts.length === 0 ? (
+
             <div className="col-span-full bg-[#111111] rounded-3xl p-10 text-center text-gray-400 border border-gray-800">
+
               No posts available
+
             </div>
+
           ) : (
+
             posts.map((post) => (
+
               <div
                 key={post._id}
                 className="bg-[#111111] rounded-3xl overflow-hidden border border-gray-800 hover:border-gray-600 transition duration-300"
@@ -86,7 +122,7 @@ export default function Dashboard() {
                   {/* PROFILE */}
                   <img
                     src={`https://full-stack-project-1-mx06.onrender.com/uploads/${post.user.profilePic}`}
-                    alt=""
+                    alt="profile"
                     className="w-14 h-14 rounded-full object-cover border-2 border-gray-700"
                   />
 
@@ -104,8 +140,6 @@ export default function Dashboard() {
                   </div>
 
                 </div>
-
-
 
                 {/* CONTENT */}
                 <div className="p-5">
@@ -125,7 +159,7 @@ export default function Dashboard() {
                     ).toLocaleString()}
                   </small>
 
-                  {/* LIKE BUTTON */}
+                  {/* LIKE */}
                   <button
                     className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm font-semibold hover:bg-[#1a1a1a] hover:text-white transition"
                   >
