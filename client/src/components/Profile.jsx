@@ -2,118 +2,185 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
-  const [content, setContent] = useState("");
+  const [user, setUser] =
+    useState(null);
 
-  // Fetch Profile
+  const [content, setContent] =
+    useState("");
+
+  // FETCH PROFILE
   useEffect(() => {
     fetchProfile();
   }, []);
 
-  // Fetch User Data
   const fetchProfile = async () => {
-    const res = await axios.get(
-      "http://localhost:3000/profile",
-      {
-        withCredentials: true,
-      }
-    );
+    try {
+      const res = await axios.get(
+        "http://localhost:3000/profile",
+        {
+          withCredentials: true,
+        }
+      );
 
-    setUser(res.data);
+      setUser(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Create Post
+  // CREATE POST
   const createPost = async () => {
     if (!content.trim()) return;
 
-    await axios.post(
-      "http://localhost:3000/post",
-      { content },
-      {
-        withCredentials: true,
-      }
-    );
+    try {
+      await axios.post(
+        "http://localhost:3000/post",
+        { content },
+        {
+          withCredentials: true,
+        }
+      );
 
-    setContent("");
+      setContent("");
 
-    fetchProfile();
+      fetchProfile();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Delete Post
+  // DELETE POST
   const deletePost = async (id) => {
-    await axios.delete(
-      `http://localhost:3000/post/${id}`,
-      {
-        withCredentials: true,
-      }
-    );
+    try {
+      await axios.delete(
+        `http://localhost:3000/post/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
 
-    fetchProfile();
+      fetchProfile();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Logout
+  // LOGOUT
   const logout = async () => {
-    await axios.get(
-      "http://localhost:3000/logout",
-      {
-        withCredentials: true,
-      }
-    );
+    try {
+      await axios.get(
+        "http://localhost:3000/logout",
+        {
+          withCredentials: true,
+        }
+      );
 
-    window.location.href = "/";
+      window.location.href =
+        "/login";
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // Loading
+  // LOADING
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <h1 className="text-3xl font-bold text-blue-600">
+      <div className="min-h-screen bg-black flex items-center justify-center">
+
+        <h1 className="text-3xl font-bold text-white">
           Loading...
         </h1>
+
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10 px-5 flex justify-center">
+    <div className="min-h-screen bg-black text-white">
 
-      <div className="w-full max-w-3xl bg-white rounded-xl shadow-md p-8">
+      {/* NAVBAR */}
+      <div className="sticky top-0 z-50 bg-[#111111] border-b border-gray-800">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
+          <button
+            onClick={() => {
+              window.location.href =
+                "/dashboard"
+            }}
+            className="px-5 py-2 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 transition"
+          >
+            Back
+          </button>
 
-          <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold">
+            Profile
+          </h1>
 
-            {/* Avatar */}
-            <div className="w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center text-xl font-bold">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-
-            {/* User Details */}
-            <div>
-              <h1 className="text-2xl font-bold text-gray-800">
-                {user.name}
-              </h1>
-
-              <p className="text-sm text-gray-500">
-                @{user.username}
-              </p>
-            </div>
-
-          </div>
-
-          {/* Logout Button */}
           <button
             onClick={logout}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-semibold hover:bg-red-600 transition"
+            className="px-5 py-2 bg-red-500 hover:bg-red-600 rounded-2xl font-semibold transition"
           >
             Logout
           </button>
 
+
+
         </div>
 
-        {/* Create Post */}
-        <div className="mb-8">
+      </div>
+
+      {/* MAIN */}
+      <div className="max-w-3xl mx-auto py-10 px-5">
+
+        {/* PROFILE CARD */}
+        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-8 mb-8">
+
+          <div className="flex items-center gap-5">
+
+
+            {/* PROFILE IMAGE */}
+            <img
+              src={`/images/uploads/${user.profilePic}`}
+              alt=""
+              onClick={() => {
+                window.location.href =
+                  "/edit";
+              }}
+              className="w-24 h-24 rounded-full object-cover border-4 border-gray-700 cursor-pointer hover:scale-105 transition duration-300"
+            />
+
+            {/* USER INFO */}
+            <div>
+
+              <h1 className="text-3xl font-bold">
+                {user.name}
+              </h1>
+
+              <p className="text-gray-400 mt-1">
+                @{user.username}
+              </p>
+
+              <div className="flex gap-6 mt-4 text-sm text-gray-400">
+
+                <p>
+                  <span className="text-white font-bold">
+                    {user.posts.length}
+                  </span>{" "}
+                  Posts
+                </p>
+
+
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* CREATE POST */}
+        <div className="bg-[#111111] border border-gray-800 rounded-3xl p-6 mb-8">
 
           <textarea
             placeholder="What's on your mind?"
@@ -121,14 +188,14 @@ export default function Profile() {
             onChange={(e) =>
               setContent(e.target.value)
             }
-            className="w-full h-20 border border-gray-300 rounded-lg p-4 text-sm outline-none resize-none focus:border-blue-600"
+            className="w-full h-28 bg-black border border-gray-700 rounded-2xl p-4 text-white outline-none resize-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition"
           />
 
           <div className="flex justify-end mt-4">
 
             <button
               onClick={createPost}
-              className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl font-semibold transition"
             >
               Create Post
             </button>
@@ -137,37 +204,90 @@ export default function Profile() {
 
         </div>
 
-        {/* Posts Title */}
-        <h2 className="text-2xl font-bold text-gray-800 mb-5">
-          Your Posts
-        </h2>
-
-        {/* Posts */}
-        <div className="flex flex-col gap-4">
+        {/* POSTS */}
+        <div className="space-y-6">
 
           {user.posts.length === 0 ? (
-            <p className="text-center text-gray-500 py-5">
+            <div className="bg-[#111111] border border-gray-800 rounded-3xl p-10 text-center text-gray-400">
+
               No posts yet
-            </p>
+
+            </div>
           ) : (
             user.posts.map((p) => (
               <div
                 key={p._id}
-                className="flex items-center justify-between gap-5 p-4 border border-gray-200 rounded-lg bg-gray-50 hover:shadow-sm transition"
+                className="bg-[#111111] border border-gray-800 rounded-3xl overflow-hidden"
               >
 
-                <p className="text-gray-700 text-sm leading-6 flex-1 wrap-break-word">
-                  {p.content}
-                </p>
+                {/* POST TOP */}
+                <div className="p-5 flex items-center justify-between border-b border-gray-800">
 
-                <button
-                  onClick={() =>
-                    deletePost(p._id)
-                  }
-                  className="px-4 py-2 bg-red-500 text-white rounded-lg text-xs font-semibold hover:bg-red-600 transition"
-                >
-                  Delete
-                </button>
+                  <div className="flex items-center gap-4">
+
+                    <img
+                      src={`/images/uploads/${user.profilePic}`}
+                      alt=""
+                      className="w-12 h-12 rounded-full object-cover border border-gray-700"
+                    />
+
+                    <div>
+
+                      <h2 className="font-bold">
+                        {user.name}
+                      </h2>
+
+                      <p className="text-sm text-gray-400">
+                        @{user.username}
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      deletePost(p._id)
+                    }
+                    className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-xl text-sm font-semibold transition"
+                  >
+                    Delete
+                  </button>
+
+                </div>
+
+
+                {/* CONTENT */}
+                <div className="p-5">
+
+                  <p className="text-gray-300 leading-7">
+                    {p.content}
+                  </p>
+
+                </div>
+
+                {/* FOOTER */}
+                <div className="px-5 py-4 border-t border-gray-800 flex items-center justify-between bg-black">
+
+                  <small className="text-gray-500 text-xs">
+                    {new Date(
+                      p.createdAt
+                    ).toLocaleString()}
+                  </small>
+
+                  <div className="flex items-center gap-3">
+
+                    <button className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm hover:bg-[#1a1a1a] hover:text-white transition">
+                      👍 Like
+                    </button>
+
+                    <button className="flex items-center gap-2 px-4 py-2 border border-gray-700 rounded-xl text-gray-400 text-sm hover:bg-[#1a1a1a] hover:text-white transition">
+                      💬 Comment
+                    </button>
+
+                  </div>
+
+                </div>
 
               </div>
             ))

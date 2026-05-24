@@ -8,6 +8,7 @@ const cors = require("cors");
 
 const userModel = require("./models/user");
 const postModel = require("./models/post");
+const multer = require("multer");
 
 const app = express();
 
@@ -22,6 +23,20 @@ app.use(
     credentials: true,
   }),
 );
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../client/public/images/uploads");
+  },
+
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+
+const upload = multer({
+  storage: storage,
+});
 
 // Register
 app.post("/register", async (req, res) => {
@@ -132,6 +147,58 @@ app.post("/post", IsloggedIn, async (req, res) => {
     message: "Post created",
   });
 });
+
+// Get All Posts
+app.get("/allposts", IsloggedIn, async (req, res) => {
+  try {
+    const posts = await postModel
+      .find()
+      .populate("user", "name username profilePic")
+      .sort({ createdAt: -1 });
+
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error fetching posts",
+    });
+  }
+});
+
+app.post(
+  "/upload-profile-pic",
+  IsloggedIn,
+  upload.single("profilePic"),
+
+  async (req, res) => {
+    try {
+      let user = await userModel.findOne({
+        email: req.user.email,
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User not found",
+        });
+      }
+
+      // save image filename
+      user.profilePic = req.file.filename;
+
+      await user.save();
+
+      res.json({
+        message: "Profile picture uploaded",
+        image: req.file.filename,
+      });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message: "Upload failed",
+      });
+    }
+  },
+);
 
 // Logout
 app.get("/logout", (req, res) => {
