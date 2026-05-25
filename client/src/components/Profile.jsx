@@ -2,15 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function Profile() {
-  const [user, setUser] =
-    useState(null);
-
-  const [content, setContent] =
-    useState("");
+  const [user, setUser] = useState(null);
+  const [content, setContent] = useState("");
 
   // TOKEN
-  const token =
-    localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
   // FETCH PROFILE
   useEffect(() => {
@@ -28,13 +24,14 @@ export default function Profile() {
         }
       );
 
+      console.log(res.data);
+
       setUser(res.data);
 
     } catch (error) {
       console.log(error);
 
-      window.location.href =
-        "/login";
+      window.location.href = "/login";
     }
   };
 
@@ -85,8 +82,7 @@ export default function Profile() {
   const logout = () => {
     localStorage.removeItem("token");
 
-    window.location.href =
-      "/login";
+    window.location.href = "/login";
   };
 
   // LOADING
@@ -102,14 +98,15 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-black text-white">
+
       {/* NAVBAR */}
       <div className="sticky top-0 z-50 bg-[#111111] border-b border-gray-800">
+
         <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
 
           <button
             onClick={() => {
-              window.location.href =
-                "/dashboard";
+              window.location.href = "/dashboard";
             }}
             className="px-5 py-2 bg-white text-black rounded-xl font-semibold hover:bg-gray-200 transition"
           >
@@ -128,6 +125,7 @@ export default function Profile() {
           </button>
 
         </div>
+
       </div>
 
       {/* MAIN */}
@@ -141,14 +139,18 @@ export default function Profile() {
             {/* PROFILE IMAGE */}
             <img
               src={
-                user.profilePic
+                user?.profilePic &&
+                  user.profilePic !== "null"
                   ? user.profilePic
                   : "https://via.placeholder.com/150"
               }
-              alt=""
+              alt="profile"
+              onError={(e) => {
+                e.target.src =
+                  "https://via.placeholder.com/150";
+              }}
               onClick={() => {
-                window.location.href =
-                  "/edit";
+                window.location.href = "/edit";
               }}
               className="w-24 h-24 rounded-full object-cover border-4 border-gray-700 cursor-pointer hover:scale-105 transition duration-300"
             />
@@ -231,11 +233,16 @@ export default function Profile() {
 
                     <img
                       src={
-                        user.profilePic
+                        user?.profilePic &&
+                          user.profilePic !== "null"
                           ? user.profilePic
                           : "https://via.placeholder.com/150"
                       }
                       alt=""
+                      onError={(e) => {
+                        e.target.src =
+                          "https://via.placeholder.com/150";
+                      }}
                       className="w-12 h-12 rounded-full object-cover border border-gray-700"
                     />
 

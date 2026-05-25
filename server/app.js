@@ -220,6 +220,7 @@ app.get(
 );
 
 // UPLOAD PROFILE PIC
+// UPLOAD PROFILE PIC
 app.post(
   "/upload-profile-pic",
   IsloggedIn,
@@ -245,13 +246,14 @@ app.post(
         });
       }
 
-      user.profilePic = req.file.secure_url;
+      // FIX
+      user.profilePic = req.file.path;
 
       await user.save();
 
       res.json({
         message: "Profile picture uploaded",
-        image: req.file.secure_url,
+        image: req.file.path,
       });
     } catch (error) {
       console.log(error);
