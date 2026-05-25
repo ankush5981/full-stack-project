@@ -70,15 +70,12 @@ export default function Register() {
       <div className="w-full max-w-md bg-[#111111] border border-gray-800 rounded-3xl p-8 shadow-2xl">
 
         {/* LOGO */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-4">
 
-          <h1 className="text-4xl font-bold text-white">
-            SocialApp
-          </h1>
+          <h3 className="text-4xl font-bold text-white">
+            Social Media
+          </h3>
 
-          <p className="text-gray-400 mt-2">
-            Create your account
-          </p>
 
         </div>
 

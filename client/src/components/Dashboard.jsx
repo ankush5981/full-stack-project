@@ -54,7 +54,7 @@ export default function Dashboard() {
         <div className="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
           {/* LOGO */}
           <h1 className="text-3xl font-bold text-white">
-            SocialApp
+            Social Media
           </h1>
 
           {/* RIGHT */}
